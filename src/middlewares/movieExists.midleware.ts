@@ -11,14 +11,16 @@ export const movieExistsByName = async (
   const repo = AppDataSource.getRepository(Movie);
 
   const movieName = req.body.name;
+  if (movieName) {
+    const exists = await repo.findBy({ name: movieName });
 
-  const exists = await repo.findBy({ name: movieName });
-
-  if (exists.length === 1) {
-    throw new AppError("Movie already exists.", 409);
+    if (exists.length === 1) {
+      throw new AppError("Movie already exists.", 409);
+    }
   }
   return next();
 };
+
 export const movieExistsById = async (
   req: Request,
   res: Response,

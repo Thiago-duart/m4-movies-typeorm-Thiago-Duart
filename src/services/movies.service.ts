@@ -21,11 +21,23 @@ export class MoviesService {
     sort,
   }: PaginationType) {
     const repo = AppDataSource.getRepository(Movie);
+    if (order === "desc" && !sort) {
+      order = "asc";
+      sort = "id";
+    }
+
     const [movies, count] = await repo.findAndCount({
       skip: page,
       take: perPage,
       order: { [sort]: order },
     });
+
+    if (perPage >= movies.length + 1) {
+      nextPage = null;
+    } else {
+      nextPage = nextPage;
+    }
+
     return {
       prevPage: page <= 1 ? null : prevPage,
       nextPage,
